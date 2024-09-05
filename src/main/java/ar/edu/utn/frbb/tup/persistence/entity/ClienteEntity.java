@@ -17,6 +17,7 @@ public class ClienteEntity extends BaseEntity {
     private final String apellido;
     private final LocalDate fechaAlta;
     private final LocalDate fechaNacimiento;
+    private final String banco;
     private List<Long> cuentas;
 
     public ClienteEntity(Cliente cliente) {
@@ -26,6 +27,7 @@ public class ClienteEntity extends BaseEntity {
         this.apellido = cliente.getApellido();
         this.fechaAlta = cliente.getFechaAlta();
         this.fechaNacimiento = cliente.getFechaNacimiento();
+        this.banco = cliente.getBanco();
         this.cuentas = new ArrayList<>();
         if (cliente.getCuentas() != null && !cliente.getCuentas().isEmpty()) {
             for (Cuenta c: cliente.getCuentas()) {
@@ -42,8 +44,11 @@ public class ClienteEntity extends BaseEntity {
         cliente.setApellido(this.apellido);
         cliente.setTipoPersona(TipoPersona.fromString(this.tipoPersona));
         cliente.setFechaAlta(this.fechaAlta);
+        cliente.setBanco(this.banco);
         cliente.setFechaNacimiento(this.fechaNacimiento);
 
         return cliente;
     }
 }
+
+
