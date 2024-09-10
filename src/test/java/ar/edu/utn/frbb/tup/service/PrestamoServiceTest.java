@@ -2,10 +2,13 @@ package ar.edu.utn.frbb.tup.service;
 
 import ar.edu.utn.frbb.tup.controller.dto.PrestamoDto;
 import ar.edu.utn.frbb.tup.model.Prestamo;
+import ar.edu.utn.frbb.tup.model.PrestamoEstado;
 import ar.edu.utn.frbb.tup.model.PrestamoResultado;
-import ar.edu.utn.frbb.tup.model.EstadoDelPrestamo;
 import ar.edu.utn.frbb.tup.model.TipoMoneda;
 import ar.edu.utn.frbb.tup.model.exception.ClienteNoEncontradoException;
+import ar.edu.utn.frbb.tup.model.exception.ClienteNull;
+import ar.edu.utn.frbb.tup.model.exception.MontoMinimoException;
+import ar.edu.utn.frbb.tup.model.exception.PlazoMesesPrestamoExxception;
 import ar.edu.utn.frbb.tup.persistence.PrestamoDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +45,7 @@ class PrestamoServiceTest {
     }
 
     @Test
-    void darDeAltaPrestamoSucces() throws Exception, ClienteNoEncontradoException {
+    void darDeAltaPrestamoSucces() throws Exception, ClienteNoEncontradoException, MontoMinimoException, ClienteNull, PlazoMesesPrestamoExxception {
         PrestamoDto prestamoDto = new PrestamoDto();
         prestamoDto.setNumeroCliente(29857643);
         prestamoDto.setMontoPrestamo(2000);
@@ -56,14 +59,14 @@ class PrestamoServiceTest {
         PrestamoResultado result = prestamoService.solicitarPrestamo(prestamoDto);
 
         assertNotNull(result);
-        assertEquals(EstadoDelPrestamo.APROBADO, result.getEstado());
+        assertEquals(PrestamoEstado.APROBADO, result.getEstado());
         assertEquals("El monto del préstamo fue acreditado en su cuenta", result.getMensaje());
 
         verify(prestamoDao).save(any(Prestamo.class));
     }
 
     @Test
-    void prestamoRechazado() throws Exception, ClienteNoEncontradoException {
+    void prestamoRechazado() throws Exception, ClienteNoEncontradoException, MontoMinimoException, ClienteNull, PlazoMesesPrestamoExxception {
         PrestamoDto prestamoDto = new PrestamoDto();
         prestamoDto.setNumeroCliente(29857643);
         prestamoDto.setMontoPrestamo(2000);
@@ -75,7 +78,7 @@ class PrestamoServiceTest {
         PrestamoResultado result = prestamoService.solicitarPrestamo(prestamoDto);
 
         assertNotNull(result);
-        assertEquals(EstadoDelPrestamo.RECHAZADO, result.getEstado());
+        assertEquals(PrestamoEstado.RECHAZADO, result.getEstado());
         assertEquals("El cliente no tiene un credito apto para solicitar un prestamo", result.getMensaje());
 
         verify(prestamoDao, never()).save(any(Prestamo.class));
@@ -124,6 +127,48 @@ class PrestamoServiceTest {
 
         Exception exception = assertThrows(RuntimeException.class, () -> prestamoService.solicitarPrestamo(prestamoDto));
         assertEquals("Error al actualizar la cuenta", exception.getMessage());
+
+        verify(prestamoDao, never()).save(any(Prestamo.class));
+    }
+
+    @Test
+    void montoMinimoPrestamoExcepcionSucces() throws Exception, ClienteNoEncontradoException, MontoMinimoException, ClienteNull, PlazoMesesPrestamoExxception{
+        PrestamoDto prestamoDto = new PrestamoDto();
+        prestamoDto.setNumeroCliente(29857643);
+        prestamoDto.setMontoPrestamo(500);
+        prestamoDto.setPlazoMeses(12);
+        prestamoDto.setMoneda("P");
+
+        MontoMinimoException exception = assertThrows(MontoMinimoException.class, () -> prestamoService.solicitarPrestamo(prestamoDto));
+        assertEquals("El monto del préstamo debe ser mayor a 1000", exception.getMessage());
+
+        verify(prestamoDao, never()).save(any(Prestamo.class));
+    }
+
+    @Test
+    void plazoMesesInvalidoExceptionSucces() {
+        PrestamoDto prestamoDto = new PrestamoDto();
+        prestamoDto.setNumeroCliente(29857643);
+        prestamoDto.setMontoPrestamo(2000);
+        prestamoDto.setPlazoMeses(1);
+        prestamoDto.setMoneda("P");
+
+        PlazoMesesPrestamoExxception exception = assertThrows(PlazoMesesPrestamoExxception.class, () -> prestamoService.solicitarPrestamo(prestamoDto));
+        assertEquals("El plazo debe estar entre 3 y 120 meses.", exception.getMessage());
+
+        verify(prestamoDao, never()).save(any(Prestamo.class));
+    }
+
+    @Test
+    void numeroClienteInvalidoExceptionSucces() {
+        PrestamoDto prestamoDto = new PrestamoDto();
+        prestamoDto.setNumeroCliente(0);
+        prestamoDto.setMontoPrestamo(2000);
+        prestamoDto.setPlazoMeses(12);
+        prestamoDto.setMoneda("P");
+
+        ClienteNull exception = assertThrows(ClienteNull.class, () -> prestamoService.solicitarPrestamo(prestamoDto));
+        assertEquals("El número de cliente no es válido.", exception.getMessage());
 
         verify(prestamoDao, never()).save(any(Prestamo.class));
     }

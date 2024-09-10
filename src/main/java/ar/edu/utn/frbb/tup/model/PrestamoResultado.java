@@ -2,24 +2,24 @@ package ar.edu.utn.frbb.tup.model;
 
 
 public class PrestamoResultado {
-    private EstadoDelPrestamo estado;
+    private PrestamoEstado estado;
     private String mensaje;
     private Cuota cuota;
 
     public PrestamoResultado() {
     }
 
-    public PrestamoResultado(EstadoDelPrestamo estado, String mensaje, Cuota cuota) {
+    public PrestamoResultado(PrestamoEstado estado, String mensaje, Cuota cuota) {
         this.estado = estado;
         this.mensaje = mensaje;
         this.cuota = cuota;
     }
 
-    public EstadoDelPrestamo getEstado() {
+    public PrestamoEstado getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoDelPrestamo estado) {
+    public void setEstado(PrestamoEstado estado) {
         this.estado = estado;
     }
 

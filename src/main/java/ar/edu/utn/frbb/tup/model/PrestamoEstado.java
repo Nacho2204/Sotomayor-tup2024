@@ -2,13 +2,13 @@ package ar.edu.utn.frbb.tup.model;
 
 import ar.edu.utn.frbb.tup.model.exception.PrestamoNoValido;
 
-public enum EstadoDelPrestamo {
+public enum PrestamoEstado {
     APROBADO("A"),
     RECHAZADO("R");
 
     private final String codigo;
 
-    EstadoDelPrestamo(String codigo) {
+    PrestamoEstado(String codigo) {
         this.codigo = codigo;
     }
 
@@ -16,8 +16,9 @@ public enum EstadoDelPrestamo {
         return codigo;
     }
 
-    public static EstadoDelPrestamo fromCodigo(String codigo) throws PrestamoNoValido {
-        for (EstadoDelPrestamo estado : values()) {
+    //para convertir el codigo en el estado del prestamo
+    public static PrestamoEstado fromCodigo(String codigo) throws PrestamoNoValido {
+        for (PrestamoEstado estado : values()) {
             if (estado.getCodigo().equals(codigo)) {
                 return estado;
             }
