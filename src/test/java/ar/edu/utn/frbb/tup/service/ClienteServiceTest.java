@@ -31,14 +31,8 @@ public class ClienteServiceTest {
     @Mock
     private ClienteDao clienteDao;
 
-    @Mock
-    private CuentaDao cuentaDao;
-
     @InjectMocks
     private ClienteService clienteService;
-
-    @InjectMocks
-    private CuentaService cuentaService;
 
     @BeforeAll
     public void setUp() {
@@ -76,7 +70,7 @@ public class ClienteServiceTest {
     }
 
     @Test
-    public void testClienteAlreadyExistsException() throws ClienteAlreadyExistsException {
+    public void testClienteAlreadyExistsException() {
         ClienteDto pepeRino = new ClienteDto();
         pepeRino.setDni(26456437);
         pepeRino.setNombre("Pepe");

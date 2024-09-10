@@ -2,11 +2,7 @@ package ar.edu.utn.frbb.tup.service;
 
 import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
 import ar.edu.utn.frbb.tup.model.*;
-import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
-import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
-import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
-import ar.edu.utn.frbb.tup.model.exception.TipoDeCuentaNoSoportadaException;
-import ar.edu.utn.frbb.tup.persistence.ClienteDao;
+import ar.edu.utn.frbb.tup.model.exception.*;
 import ar.edu.utn.frbb.tup.persistence.CuentaDao;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,9 +24,6 @@ import java.time.LocalDate;
 public class CuentaServiceTest {
 
     @Mock
-    private ClienteDao clienteDao;
-
-    @Mock
     private CuentaDao cuentaDao;
 
     @Mock
@@ -45,7 +38,7 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testCuentaExistente() throws CuentaAlreadyExistsException, TipoCuentaAlreadyExistsException, TipoDeCuentaNoSoportadaException {
+    public void testCuentaExistente()  {
         Cuenta cuentaExistente = new Cuenta();
         CuentaDto cuentaDto = new CuentaDto();
         cuentaDto.setDniTitular(123456789);
@@ -72,7 +65,7 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testClienteYaTieneCuentaDeEseTipo() throws CuentaAlreadyExistsException, TipoCuentaAlreadyExistsException, TipoDeCuentaNoSoportadaException {
+    public void testClienteYaTieneCuentaDeEseTipo() throws Exception, ClienteNoEncontradoException {
         Cliente peperino = new Cliente();
         peperino.setDni(123456789);
         peperino.setNombre("Pepe");
@@ -97,7 +90,7 @@ public class CuentaServiceTest {
     }
 
     @Test
-    public void testDarDeAltaCuentaTipoNuevo() throws CuentaAlreadyExistsException, TipoCuentaAlreadyExistsException, TipoDeCuentaNoSoportadaException, ClienteAlreadyExistsException {
+    public void testDarDeAltaCuentaTipoNuevo() throws CuentaAlreadyExistsException, Exception, TipoDeCuentaNoSoportadaException, ClienteNoEncontradoException {
         Cliente peperino = new Cliente();
         peperino.setDni(123456789);
         peperino.setNombre("Pepe");

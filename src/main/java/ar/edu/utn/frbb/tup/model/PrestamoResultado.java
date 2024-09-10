@@ -1,6 +1,5 @@
 package ar.edu.utn.frbb.tup.model;
 
-import ar.edu.utn.frbb.tup.model.EstadoDelPrestamo;
 
 public class PrestamoResultado {
     private EstadoDelPrestamo estado;
@@ -9,6 +8,7 @@ public class PrestamoResultado {
 
     public PrestamoResultado() {
     }
+
     public PrestamoResultado(EstadoDelPrestamo estado, String mensaje, Cuota cuota) {
         this.estado = estado;
         this.mensaje = mensaje;

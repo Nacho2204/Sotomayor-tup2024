@@ -103,8 +103,5 @@ public class Prestamo {
         this.cuotasPagas = cuotasPagas;
     }
 
-    public void pagarCuota() {
-        this.saldoRestante = this.saldoRestante - this.valorCuota;
-        this.cuotasPagas++;
-    }
+
 }
