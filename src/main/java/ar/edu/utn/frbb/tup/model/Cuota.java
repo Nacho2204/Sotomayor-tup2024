@@ -2,17 +2,15 @@ package ar.edu.utn.frbb.tup.model;
 
 public class Cuota {
     private int cuotaNro;
-    private double monto;
+    private double cuotaMonto;
 
-    public Cuota(int cuotaNro, double monto) {
-        this.cuotaNro = cuotaNro;
-        this.monto = monto;
+    //Constructor para inicializar el numero de cuotas y el monto con interes
+    public Cuota(int cuotaNro, double cuotaMonto) {
+        this.cuotaNro = 1;
+        // Se distribuye el monto entre las cuotas y se aplica un 5% de interés
+        this.cuotaMonto = (cuotaMonto / cuotaNro) * 1.05;
     }
 
-    public Cuota() {
-    }
-
-    // Getters y Setters
     public int getCuotaNro() {
         return cuotaNro;
     }
@@ -21,11 +19,11 @@ public class Cuota {
         this.cuotaNro = cuotaNro;
     }
 
-    public double getMonto() {
-        return monto;
+    public double getCuotaMonto() {
+        return cuotaMonto;
     }
 
-    public void setMonto(double monto) {
-        this.monto = monto;
+    public void setCuotaMonto(double cuotaMonto) {
+        this.cuotaMonto = cuotaMonto;
     }
 }
