@@ -44,12 +44,12 @@ class PrestamoServiceTest {
     @Test
     void darDeAltaPrestamoSucces() throws Exception, ClienteNoEncontradoException {
         PrestamoDto prestamoDto = new PrestamoDto();
-        prestamoDto.setNumeroCliente(12345678L);
+        prestamoDto.setNumeroCliente(29857643);
         prestamoDto.setMontoPrestamo(2000);
         prestamoDto.setPlazoMeses(12);
         prestamoDto.setMoneda("P");
 
-        when(scoreCreditService.verificarScore(12345678L)).thenReturn(true);
+        when(scoreCreditService.verificarScore(29857643)).thenReturn(true);
         doNothing().when(clienteService).agregarPrestamo(any(Prestamo.class), anyLong());
         doNothing().when(cuentaService).actualizarCuenta(any(Prestamo.class));
 
@@ -65,12 +65,12 @@ class PrestamoServiceTest {
     @Test
     void prestamoRechazado() throws Exception, ClienteNoEncontradoException {
         PrestamoDto prestamoDto = new PrestamoDto();
-        prestamoDto.setNumeroCliente(12345678L);
-        prestamoDto.setMontoPrestamo(1000L);
+        prestamoDto.setNumeroCliente(29857643);
+        prestamoDto.setMontoPrestamo(2000);
         prestamoDto.setPlazoMeses(12);
         prestamoDto.setMoneda("P");
 
-        when(scoreCreditService.verificarScore(12345678L)).thenReturn(false);
+        when(scoreCreditService.verificarScore(29857643)).thenReturn(false);
 
         PrestamoResultado result = prestamoService.solicitarPrestamo(prestamoDto);
 
@@ -83,10 +83,10 @@ class PrestamoServiceTest {
 
     @Test
     void getPrestamosByClienteSucces() throws ClienteNoEncontradoException, Exception {
-        long dni = 12345678L;
+        long dni = 29857643;
         List<Prestamo> prestamos = Arrays.asList(
-                new Prestamo(dni, 12, 1000L, TipoMoneda.PESOS),
-                new Prestamo(dni, 24, 2000L, TipoMoneda.DOLARES)
+                new Prestamo(dni, 12, 2000, TipoMoneda.PESOS),
+                new Prestamo(dni, 24, 3000, TipoMoneda.DOLARES)
         );
 
         when(clienteService.buscarClientePorDni(dni)).thenReturn(null); // Simulamos que el cliente existe
@@ -102,7 +102,7 @@ class PrestamoServiceTest {
 
     @Test
     void getPrestamosByClienteRechazado() throws ClienteNoEncontradoException, Exception {
-        long dni = 12345678L;
+        long dni = 29857643;
 
         when(clienteService.buscarClientePorDni(dni)).thenThrow(new ClienteNoEncontradoException("El cliente no existe"));
 
@@ -113,12 +113,12 @@ class PrestamoServiceTest {
     @Test
     void falloEnActualizacionDeCuenta() throws Exception, ClienteNoEncontradoException {
         PrestamoDto prestamoDto = new PrestamoDto();
-        prestamoDto.setNumeroCliente(12345678L);
-        prestamoDto.setMontoPrestamo(1000L);
+        prestamoDto.setNumeroCliente(29857643);
+        prestamoDto.setMontoPrestamo(2000);
         prestamoDto.setPlazoMeses(12);
         prestamoDto.setMoneda("P");
 
-        when(scoreCreditService.verificarScore(12345678L)).thenReturn(true);
+        when(scoreCreditService.verificarScore(29857643)).thenReturn(true);
         doNothing().when(clienteService).agregarPrestamo(any(Prestamo.class), anyLong());
         doThrow(new RuntimeException("Error al actualizar la cuenta")).when(cuentaService).actualizarCuenta(any(Prestamo.class));
 
