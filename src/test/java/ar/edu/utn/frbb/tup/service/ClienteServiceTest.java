@@ -3,6 +3,8 @@ package ar.edu.utn.frbb.tup.service;
 import ar.edu.utn.frbb.tup.controller.dto.ClienteDto;
 import ar.edu.utn.frbb.tup.model.*;
 import ar.edu.utn.frbb.tup.model.exception.ClienteAlreadyExistsException;
+import ar.edu.utn.frbb.tup.model.exception.ClienteMenorDeEdadException;
+import ar.edu.utn.frbb.tup.model.exception.ClienteNoEncontradoException;
 import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
 import ar.edu.utn.frbb.tup.persistence.ClienteDao;
 import ar.edu.utn.frbb.tup.persistence.CuentaDao;
@@ -63,7 +65,7 @@ public class ClienteServiceTest {
     }
 
     @Test
-    public void testClienteSuccess() throws ClienteAlreadyExistsException {
+    public void testClienteSuccess() throws ClienteAlreadyExistsException, ClienteMenorDeEdadException, Exception {
         ClienteDto cliente = new ClienteDto();
         cliente.setFechaNacimiento("1978-03-18");
         cliente.setDni(29857643);
@@ -90,7 +92,7 @@ public class ClienteServiceTest {
 
 
     @Test
-    public void testAgregarCuentaAClienteSuccess() throws TipoCuentaAlreadyExistsException {
+    public void testAgregarCuentaAClienteSuccess() throws Exception, ClienteNoEncontradoException {
         Cliente pepeRino = new Cliente();
         pepeRino.setDni(26456439);
         pepeRino.setNombre("Pepe");
@@ -116,7 +118,7 @@ public class ClienteServiceTest {
 
 
     @Test
-    public void testAgregarCuentaAClienteDuplicada() throws TipoCuentaAlreadyExistsException {
+    public void testAgregarCuentaAClienteDuplicada() throws Exception, ClienteNoEncontradoException {
         Cliente luciano = new Cliente();
         luciano.setDni(26456439);
         luciano.setNombre("Pepe");
@@ -148,8 +150,7 @@ public class ClienteServiceTest {
 
     //Agregar una CA$ y CC$ --> success 2 cuentas, titular peperino
     @Test
-    public void agregarCuentasSucces() throws TipoCuentaAlreadyExistsException
-    {
+    public void agregarCuentasSucces() throws Exception, ClienteNoEncontradoException {
         Cliente peperino = crearClienteMock();
 
         Cuenta cuentaAhorro = new Cuenta()
@@ -178,8 +179,7 @@ public class ClienteServiceTest {
     //Agregar una CA$ y CAU$S --> success 2 cuentas, titular peperino...
 
     @Test
-    public void cuentaEnPesosYDolaresSucces() throws TipoCuentaAlreadyExistsException
-    {
+    public void cuentaEnPesosYDolaresSucces() throws Exception, ClienteNoEncontradoException {
         Cliente peperino = crearClienteMock();
 
         Cuenta cuenta1 = new Cuenta()
@@ -208,7 +208,7 @@ public class ClienteServiceTest {
     //Testear clienteService.buscarPorDni
 
     @Test
-    public void buscarPorDniSucces(){
+    public void buscarPorDniSucces() throws ClienteNoEncontradoException, Exception {
         Cliente buscado = crearClienteMock();
 
         when(clienteDao.find(buscado.getDni(), true)).thenReturn(buscado);

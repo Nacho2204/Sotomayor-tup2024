@@ -2,24 +2,14 @@ package ar.edu.utn.frbb.tup.service;
 
 import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
 import ar.edu.utn.frbb.tup.model.*;
-import ar.edu.utn.frbb.tup.model.exception.CuentaAlreadyExistsException;
-import ar.edu.utn.frbb.tup.model.exception.TipoCuentaAlreadyExistsException;
-import ar.edu.utn.frbb.tup.model.exception.TipoDeCuentaNoSoportadaException;
-import ar.edu.utn.frbb.tup.model.exception.CuentaNoEncontradaException;
-import ar.edu.utn.frbb.tup.model.exception.NoSaldoException;
+import ar.edu.utn.frbb.tup.model.exception.*;
 import ar.edu.utn.frbb.tup.persistence.CuentaDao;
-import ar.edu.utn.frbb.tup.persistence.entity.CuentaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-
-import java.util.Optional;
 
 @Component
 public class CuentaService {
 
-    @Autowired
-    private CuentaRepo cuentaRepo;
 
     @Autowired
     private CuentaDao cuentaDao;
@@ -27,7 +17,7 @@ public class CuentaService {
     @Autowired
     private ClienteService clienteService;
 
-    public Cuenta darDeAltaCuenta(CuentaDto cuentaDto) throws CuentaAlreadyExistsException, TipoDeCuentaNoSoportadaException, TipoCuentaAlreadyExistsException {
+    public Cuenta darDeAltaCuenta(CuentaDto cuentaDto) throws CuentaAlreadyExistsException, TipoDeCuentaNoSoportadaException, Exception, ClienteNoEncontradoException {
         Cuenta cuenta = new Cuenta(cuentaDto);
 
         if(cuentaDao.find(cuenta.getNumeroCuenta()) != null) {
@@ -40,7 +30,7 @@ public class CuentaService {
 
         Cliente cliente = clienteService.buscarClientePorDni(cuentaDto.getDniTitular());
         clienteService.agregarCuenta(cuenta, cuentaDto.getDniTitular());
-        cuenta.setTitular(cliente);
+
 
         cuentaDao.save(cuenta);
 
@@ -63,9 +53,6 @@ public class CuentaService {
 
 
 
-    public Optional<CuentaEntity> obtenerCuentaPorId(long cuentaId) {
-        return cuentaRepo.findById(cuentaId);
-    }
     public void actualizarCuenta(Prestamo prestamo) throws Exception {
         Cuenta cuenta = findByMoneda(prestamo.getMoneda());
         cuenta.setBalance(cuenta.getBalance() + prestamo.getMontoPedido());
@@ -79,13 +66,6 @@ public class CuentaService {
         return cuentaDao.findByMoneda(moneda);
     }
 
-    public void  pagarCuotaPrestamo(Prestamo prestamo) throws Exception {
-        Cuenta cuenta = findByMoneda(prestamo.getMoneda());
-        if (cuenta.getBalance() < prestamo.getValorCuota()) {
-            throw new NoSaldoException("No hay suficiente saldo en la cuenta");
-        }
-        cuenta.setBalance(cuenta.getBalance() - prestamo.getValorCuota());
-        cuentaDao.save(cuenta);
-    }
+
 
 }

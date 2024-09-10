@@ -1,5 +1,7 @@
 package ar.edu.utn.frbb.tup.model;
 
+import ar.edu.utn.frbb.tup.model.exception.PrestamoNoValido;
+
 public enum EstadoDelPrestamo {
     APROBADO("A"),
     RECHAZADO("R");
@@ -14,12 +16,12 @@ public enum EstadoDelPrestamo {
         return codigo;
     }
 
-    public static EstadoDelPrestamo fromCodigo(String codigo) {
+    public static EstadoDelPrestamo fromCodigo(String codigo) throws PrestamoNoValido {
         for (EstadoDelPrestamo estado : values()) {
             if (estado.getCodigo().equals(codigo)) {
                 return estado;
             }
         }
-        throw new IllegalArgumentException("Código de estado inválido: " + codigo);
+        throw new PrestamoNoValido("Código de estado inválido: " + codigo);
     }
 }
