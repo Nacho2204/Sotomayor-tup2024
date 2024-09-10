@@ -1,6 +1,7 @@
 package ar.edu.utn.frbb.tup.persistence;
 
 import ar.edu.utn.frbb.tup.model.Cuenta;
+import ar.edu.utn.frbb.tup.model.TipoMoneda;
 import ar.edu.utn.frbb.tup.persistence.entity.CuentaEntity;
 import org.springframework.stereotype.Component;
 
@@ -31,16 +32,29 @@ public class CuentaDao extends AbstractBaseDao {
         List<Cuenta> cuentasDelCliente = new ArrayList<>();
         for (Object object : getInMemoryDatabase().values()) {
             CuentaEntity cuenta = ((CuentaEntity) object);
-            if (cuenta.getTitular().equals(dni)) {
+            // Comparar el dni del titular, no el objeto Cliente completo
+            if (cuenta.getTitular() != null && cuenta.getTitular().getDni() == dni) {
                 cuentasDelCliente.add(cuenta.toCuenta());
             }
         }
         return cuentasDelCliente;
     }
 
+    public Cuenta findByMoneda(TipoMoneda moneda) {
+        for (Object object : getInMemoryDatabase().values()) {
+            CuentaEntity cuentaEntity = ((CuentaEntity) object);
+            TipoMoneda cuentaMoneda = TipoMoneda.valueOf(cuentaEntity.getMoneda());
+            if (cuentaMoneda.equals(moneda)) {
+                return cuentaEntity.toCuenta();
+            }
+        }
+        return null;
+    }
+
+
     public void update(Cuenta cuenta) {
-        // Actualiza la cuenta en la base de datos
-        getInMemoryDatabase().put(cuenta.getNumeroCuenta(), new CuentaEntity(cuenta));
+            // Actualiza la cuenta en la base de datos
+            getInMemoryDatabase().put(cuenta.getNumeroCuenta(), new CuentaEntity(cuenta));
     }
 
     public boolean verificarCuenta(long numeroCliente, String moneda) {

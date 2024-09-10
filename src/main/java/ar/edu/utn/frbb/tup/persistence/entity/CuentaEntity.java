@@ -15,6 +15,7 @@ public class CuentaEntity extends BaseEntity {
     String tipoCuenta;
     String moneda;
     Cliente titular; // Mantener titular como objeto Cliente
+    String banco;
     long numeroCuenta;
 
     public CuentaEntity(Cuenta cuenta) {
@@ -22,6 +23,7 @@ public class CuentaEntity extends BaseEntity {
         this.balance = cuenta.getBalance();
         this.tipoCuenta = cuenta.getTipoCuenta().toString();
         this.moneda = cuenta.getMoneda().toString();
+        this.banco = cuenta.getTitular().getBanco();
         this.titular = cuenta.getTitular(); // Asignar Cliente directamente
         this.fechaCreacion = cuenta.getFechaCreacion();
         this.numeroCuenta = cuenta.getNumeroCuenta();

@@ -1,34 +1,41 @@
 package ar.edu.utn.frbb.tup.model;
 
-import java.util.List;
-import java.util.Map;
-
 import ar.edu.utn.frbb.tup.controller.dto.PrestamoDto;
 import ar.edu.utn.frbb.tup.model.TipoMoneda;
-import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
-
 
 public class Prestamo {
+    private long id;
     private long numeroCliente;
-    private double montoPrestamo;
-    private TipoMoneda moneda;
     private int plazoMeses;
-    private List<Map<String, Object>> planPagos; // Lista de mapas para el plan de pagos
-    private int pagosRealizados;
-    private double saldoRestante;
+    private long montoPedido;
+    private long montoConIntereses;
+    private long saldoRestante; //saldo deudor a pagar
+    private long valorCuota;
+    private int cuotasPagas;
+    private TipoMoneda moneda;
 
-    public Prestamo() {
+
+    public Prestamo() {}
+
+    public Prestamo(long numeroCliente, int plazoMeses, long montoPedido, TipoMoneda moneda) {
+        this.numeroCliente = numeroCliente;
+        this.plazoMeses = plazoMeses;
+        this.montoPedido = montoPedido;
+        this.montoConIntereses = (long) (montoPedido * 1.05);
+        this.valorCuota = (long) (this.montoConIntereses / this.plazoMeses);
+        this.cuotasPagas = 0;
+        this.saldoRestante = this.montoConIntereses;
+        this.moneda = moneda;
     }
 
     public Prestamo(PrestamoDto prestamoDto) {
-        this.numeroCliente = prestamoDto.getNumeroCliente();
-        this.montoPrestamo = prestamoDto.getMontoPrestamo();
-        this.moneda = TipoMoneda.fromString(prestamoDto.getMoneda());
-        this.plazoMeses = prestamoDto.getPlazoMeses();
-        this.planPagos = prestamoDto.getPlanPagos();
+        this(prestamoDto.getNumeroCliente(), prestamoDto.getPlazoMeses(), prestamoDto.getMontoPrestamo(), TipoMoneda.fromString(prestamoDto.getMoneda()));
+        this.montoConIntereses = (long) (prestamoDto.getMontoPrestamo() * 1.05);
+        this.saldoRestante = this.montoConIntereses;
+        this.valorCuota = (long) (this.montoConIntereses / this.plazoMeses);
+        this.cuotasPagas = 0;
     }
 
-    // Getters y Setters
     public long getNumeroCliente() {
         return numeroCliente;
     }
@@ -37,45 +44,68 @@ public class Prestamo {
         this.numeroCliente = numeroCliente;
     }
 
-    public double getMontoPrestamo() {
-        return montoPrestamo;
-    }
-
-    public void setMontoPrestamo(double montoPrestamo) {
-        this.montoPrestamo = montoPrestamo;
-    }
-
     public TipoMoneda getMoneda() {
         return moneda;
     }
 
-    public Prestamo setMoneda(TipoMoneda moneda) {
+    public void setMoneda(TipoMoneda moneda) {
         this.moneda = moneda;
-        return this;
+    }
+
+    public long getMontoPedido() {
+        return montoPedido;
+    }
+
+    public void setMontoPedido(long montoPedido) {
+        this.montoPedido = montoPedido;
     }
 
     public int getPlazoMeses() {
         return plazoMeses;
     }
 
-    public int getPagosRealizados() {
-        return pagosRealizados;
-    }
-
-    public double getSaldoRestante() {
-        return saldoRestante;
-    }
-
     public void setPlazoMeses(int plazoMeses) {
         this.plazoMeses = plazoMeses;
     }
 
-    public List<Map<String, Object>> getPlanPagos() {
-        return planPagos;
+    public long getId() { return id; }
+
+    public void setId(long id) { this.id = id; }
+
+    public long getMontoConIntereses() {
+        return montoConIntereses;
     }
 
-    public void setPlanPagos(List<Map<String, Object>> planPagos) {
-        this.planPagos = planPagos;
+    public void setMontoConIntereses(long montoConIntereses) {
+        this.montoConIntereses = montoConIntereses;
     }
 
+    public long getSaldoRestante() {
+        return saldoRestante;
+    }
+
+    public void setSaldoRestante(long saldoRestante) {
+        this.saldoRestante = saldoRestante;
+    }
+
+    public long getValorCuota() {
+        return valorCuota;
+    }
+
+    public void setValorCuota(long valorCuota) {
+        this.valorCuota = valorCuota;
+    }
+
+    public int getCuotasPagas() {
+        return cuotasPagas;
+    }
+
+    public void setCuotasPagas(int cuotasPagas) {
+        this.cuotasPagas = cuotasPagas;
+    }
+
+    public void pagarCuota() {
+        this.saldoRestante = this.saldoRestante - this.valorCuota;
+        this.cuotasPagas++;
+    }
 }

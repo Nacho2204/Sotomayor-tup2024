@@ -2,6 +2,7 @@ package ar.edu.utn.frbb.tup.model;
 
 import ar.edu.utn.frbb.tup.controller.dto.CuentaDto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
 import java.util.Random;
@@ -11,6 +12,7 @@ public class Cuenta {
     LocalDate fechaCreacion;
     double balance;
     TipoCuenta tipoCuenta;
+    @JsonIgnore
     Cliente titular;
     TipoMoneda moneda;
 
@@ -96,4 +98,5 @@ public class Cuenta {
     public long getNumeroCuenta() {
         return numeroCuenta;
     }
+
 }

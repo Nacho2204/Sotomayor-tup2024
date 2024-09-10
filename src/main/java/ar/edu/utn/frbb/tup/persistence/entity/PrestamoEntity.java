@@ -3,73 +3,78 @@ package ar.edu.utn.frbb.tup.persistence.entity;
 import ar.edu.utn.frbb.tup.model.Prestamo;
 import ar.edu.utn.frbb.tup.model.TipoMoneda;
 
-import java.util.List;
-import java.util.Map;
-
 public class PrestamoEntity extends BaseEntity {
-    private long numeroCliente;
-    private double montoPrestamo;
-    private TipoMoneda moneda;
-    private int plazoMeses;
-    private List<Map<String, Object>> planPagos;
+    private final long numeroCliente;
+    private final int plazoMeses;
+    private final long montoPedido;
+    private String moneda;
+    private final long montoConIntereses;
+    private final long saldoRestante; //saldo deudor a pagar
+    private final long valorCuota;
+    private final int cuotasPagas;
 
     public PrestamoEntity(Prestamo prestamo) {
-        super(System.currentTimeMillis()); // Usar un ID generado automáticamente
+        super(prestamo.getId());
         this.numeroCliente = prestamo.getNumeroCliente();
-        this.montoPrestamo = prestamo.getMontoPrestamo();
-        this.moneda = prestamo.getMoneda();
         this.plazoMeses = prestamo.getPlazoMeses();
-        this.planPagos = prestamo.getPlanPagos();
+        this.montoPedido = prestamo.getMontoPedido();
+        this.moneda = prestamo.getMoneda().toString();
+        this.montoConIntereses = prestamo.getMontoConIntereses();
+        this.saldoRestante = prestamo.getSaldoRestante();
+        this.valorCuota = prestamo.getValorCuota();
+        this.cuotasPagas = prestamo.getCuotasPagas();
     }
 
     public Prestamo toPrestamo() {
         Prestamo prestamo = new Prestamo();
-        prestamo.setNumeroCliente(this.numeroCliente);
-        prestamo.setMontoPrestamo(this.montoPrestamo);
-        prestamo.setMoneda(this.moneda);
-        prestamo.setPlazoMeses(this.plazoMeses);
-        prestamo.setPlanPagos(this.planPagos);
+        prestamo.setId(this.getId());
+        prestamo.setNumeroCliente(this.getNumeroCliente());
+        prestamo.setPlazoMeses(this.getPlazoMeses());
+        prestamo.setMontoPedido(this.getMontoPedido());
+        prestamo.setMoneda(TipoMoneda.valueOf(this.getMoneda()));
+        prestamo.setMontoConIntereses(this.getMontoConIntereses());
+        prestamo.setSaldoRestante(this.getSaldoRestante());
+        prestamo.setValorCuota(this.getValorCuota());
+        prestamo.setCuotasPagas(this.getCuotasPagas());
         return prestamo;
     }
 
-    // Getters and Setters
     public long getNumeroCliente() {
         return numeroCliente;
-    }
-
-    public void setNumeroCliente(long numeroCliente) {
-        this.numeroCliente = numeroCliente;
-    }
-
-    public double getMontoPrestamo() {
-        return montoPrestamo;
-    }
-
-    public void setMontoPrestamo(double montoPrestamo) {
-        this.montoPrestamo = montoPrestamo;
-    }
-
-    public TipoMoneda getMoneda() {
-        return moneda;
-    }
-
-    public void setMoneda(TipoMoneda moneda) {
-        this.moneda = moneda;
     }
 
     public int getPlazoMeses() {
         return plazoMeses;
     }
 
-    public void setPlazoMeses(int plazoMeses) {
-        this.plazoMeses = plazoMeses;
+
+    public long getMontoPedido() {
+        return montoPedido;
     }
 
-    public List<Map<String, Object>> getPlanPagos() {
-        return planPagos;
+    public String getMoneda() {
+        return moneda;
     }
 
-    public void setPlanPagos(List<Map<String, Object>> planPagos) {
-        this.planPagos = planPagos;
+    public void setMoneda(String moneda) {
+        this.moneda = moneda;
     }
+
+    public long getMontoConIntereses() {
+        return montoConIntereses;
+    }
+
+
+    public long getSaldoRestante() {
+        return saldoRestante;
+    }
+
+    public long getValorCuota() {
+        return valorCuota;
+    }
+
+    public int getCuotasPagas() {
+        return cuotasPagas;
+    }
+
 }

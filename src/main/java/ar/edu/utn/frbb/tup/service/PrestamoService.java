@@ -1,10 +1,11 @@
 package ar.edu.utn.frbb.tup.service;
 
-import ar.edu.utn.frbb.tup.model.Cuenta;
+import ar.edu.utn.frbb.tup.controller.dto.PrestamoDto;
 import ar.edu.utn.frbb.tup.model.Prestamo;
-import ar.edu.utn.frbb.tup.persistence.CuentaDao;
+import ar.edu.utn.frbb.tup.model.PrestamoResultado;
+import ar.edu.utn.frbb.tup.model.EstadoDelPrestamo;
+import ar.edu.utn.frbb.tup.model.exception.PrestamoNoExisteException;
 import ar.edu.utn.frbb.tup.persistence.PrestamoDao;
-import ar.edu.utn.frbb.tup.persistence.entity.PrestamoEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public class PrestamoService {
 
     @Autowired
-    private ScoreCrediticioService scoreCrediticioService;
+    private ClienteService clienteService;
 
     @Autowired
     private CuentaService cuentaService;
@@ -23,63 +24,41 @@ public class PrestamoService {
     private PrestamoDao prestamoDao;
 
     @Autowired
-    private CuentaDao cuentaDao;
+    private ScoreCrediticioService scoreCreditService;
 
-    public Prestamo solicitarPrestamo(Prestamo prestamo) {
-        boolean scoreValido = scoreCrediticioService.verificarScore(prestamo.getNumeroCliente());
 
-        if (!scoreValido) {
-            // Manejar el caso de score no válido (retornar null, lanzar excepción, etc.)
-            return null;
-        }
+    public PrestamoResultado solicitarPrestamo (PrestamoDto prestamoDto) throws  Exception {
+        Prestamo prestamo = new Prestamo(prestamoDto);
+//        if (!scoreCreditService.verifyScore(prestamo.getNumeroCliente())) {
+//            PrestamoResultado prestamoResultado = new PrestamoResultado();
+//            prestamoResultado.setEstado(EstadoDelPrestamo.RECHAZADO);
+//            prestamoResultado.setMensaje("El cliente no tiene un credito apto para solicitar un prestamo");
+//            return prestamoResultado;
+//        }
+        clienteService.agregarPrestamo(prestamo, prestamo.getNumeroCliente());
+        cuentaService.actualizarCuenta(prestamo);
+        prestamoDao.save(prestamo);
 
-        double intereses = calcularIntereses(prestamo.getMontoPrestamo(), prestamo.getPlazoMeses());
-        prestamo.setMontoPrestamo(prestamo.getMontoPrestamo() + intereses);
-
-        // Almacenar el préstamo y actualizar la cuenta del cliente en un solo método
-        Prestamo prestamoGuardado = almacenarYActualizarPrestamo(prestamo);
-
-        return prestamoGuardado;
+        PrestamoResultado prestamoResultado = new PrestamoResultado();
+        prestamoResultado.setEstado(EstadoDelPrestamo.APROBADO);
+        prestamoResultado.setMensaje("El monto del préstamo fue acreditado en su cuenta");
+        prestamoResultado.setPlanPago(prestamo.getPlazoMeses(), prestamo.getMontoPedido());
+        return prestamoResultado;
     }
 
-    private Prestamo almacenarYActualizarPrestamo(Prestamo prestamo) {
-        // Convertir Prestamo a PrestamoEntity
-        PrestamoEntity entity = new PrestamoEntity(prestamo);
+    public List<Prestamo> getPrestamosByCliente(long dni) throws  Exception{
+        clienteService.buscarClientePorDni(dni);
+        return prestamoDao.getPrestamosByCliente(dni);
+    }
 
-        // Almacenar el préstamo en la base de datos en memoria
-        prestamoDao.save(entity);
-
-        // Buscar las cuentas del cliente por su DNI
-        List<Cuenta> cuentas = cuentaDao.getCuentasByCliente(prestamo.getNumeroCliente());
-
-        // Verificar si el cliente tiene una cuenta con la moneda del préstamo
-        boolean cuentaEncontrada = false;
-        for (Cuenta cuenta : cuentas) {
-            if (cuenta.getMoneda().equals(prestamo.getMoneda())) {
-                if (cuenta.getTitular() != null && cuenta.getTitular().getDni() == prestamo.getNumeroCliente()) {
-                    cuenta.setBalance(cuenta.getBalance() + prestamo.getMontoPrestamo());
-                    cuentaDao.update(cuenta);
-                    cuentaEncontrada = true;
-                    break;
-                } else {
-                    throw new RuntimeException("La cuenta encontrada no tiene un titular válido");
-                }
-            }
+    public Prestamo pagarCuota(long id) throws  Exception{
+        Prestamo prestamo = prestamoDao.find(id);
+        if (prestamo == null) {
+            throw new PrestamoNoExisteException("El prestamo no existe");
         }
-
-        if (!cuentaEncontrada) {
-            throw new IllegalStateException("No se encontró una cuenta con la moneda especificada para el cliente " + prestamo.getNumeroCliente());
-        }
-
+        cuentaService.pagarCuotaPrestamo(prestamo);
+        prestamo.pagarCuota();
+        prestamoDao.save(prestamo);
         return prestamo;
-    }
-
-    private double calcularIntereses(double monto, int plazoMeses) {
-        // Lógica para calcular los intereses
-        return monto * 0.05 * plazoMeses; // Ejemplo: 5% de interés mensual
-    }
-
-    public List<Prestamo> obtenerPrestamosPorCliente(long clienteId) {
-        return prestamoDao.findByClienteId(clienteId);
     }
 }

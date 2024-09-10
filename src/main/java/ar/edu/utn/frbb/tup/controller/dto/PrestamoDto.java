@@ -1,39 +1,27 @@
 package ar.edu.utn.frbb.tup.controller.dto;
 
-import java.util.List;
-import java.util.Map;
-
 public class PrestamoDto {
     private long numeroCliente;
-    private double montoPrestamo;
-    private String moneda;
     private int plazoMeses;
-    private List<Map<String, Object>> planPagos;
-    private Long id;
+    private long montoPrestamo;
+    private String moneda;
 
-    // Getters y setters
+    public PrestamoDto() {
+    }
+
+    public PrestamoDto(long numeroCliente, int plazoMeses, long montoPrestamo, String moneda) {
+        this.numeroCliente = numeroCliente;
+        this.plazoMeses = plazoMeses;
+        this.montoPrestamo = montoPrestamo;
+        this.moneda = moneda;
+    }
+
     public long getNumeroCliente() {
         return numeroCliente;
     }
 
     public void setNumeroCliente(long numeroCliente) {
         this.numeroCliente = numeroCliente;
-    }
-
-    public double getMontoPrestamo() {
-        return montoPrestamo;
-    }
-
-    public void setMontoPrestamo(double montoPrestamo) {
-        this.montoPrestamo = montoPrestamo;
-    }
-
-    public String getMoneda() {
-        return moneda;
-    }
-
-    public void setMoneda(String moneda) {
-        this.moneda = moneda;
     }
 
     public int getPlazoMeses() {
@@ -44,19 +32,19 @@ public class PrestamoDto {
         this.plazoMeses = plazoMeses;
     }
 
-    public List<Map<String, Object>> getPlanPagos() {
-        return planPagos;
+    public long getMontoPrestamo() {
+        return montoPrestamo;
     }
 
-    public void setPlanPagos(List<Map<String, Object>> planPagos) {
-        this.planPagos = planPagos;
+    public void setMontoPrestamo(long montoPrestamo) {
+        this.montoPrestamo = montoPrestamo;
     }
 
-    public Long getId() {
-        return id;
+    public String getMoneda() {
+        return moneda;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setMoneda(String moneda) {
+        this.moneda = moneda;
     }
 }
