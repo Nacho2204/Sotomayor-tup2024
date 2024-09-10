@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 public class ScoreCrediticioService {
 
 
+    // simula la consulta de un score crediticio de un cliente
 
     public boolean verificarScore(long numeroCliente) {
         int random = (int) (Math.random() * 100);
