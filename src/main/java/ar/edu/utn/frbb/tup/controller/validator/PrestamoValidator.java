@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PrestamoValidator {
 
+    //metodo de validaciones para el prestamo
+
     public void validate(PrestamoDto prestamoDto) throws TipoMonedaNoSoportadaException, MontoMinimoException, ClienteNull, PlazoMesesPrestamoExxception {
         // Validar que la moneda sea "P" o "D"
         if ((!"P".equals(prestamoDto.getMoneda()) && !"D".equals(prestamoDto.getMoneda()))) {

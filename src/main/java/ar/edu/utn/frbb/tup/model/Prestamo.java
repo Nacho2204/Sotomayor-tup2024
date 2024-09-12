@@ -13,7 +13,7 @@ public class Prestamo {
     private int cuotasPagas;
     private TipoMoneda moneda;
 
-
+    //constructores
     public Prestamo() {}
 
     public Prestamo(long numeroCliente, int plazoMeses, long montoPedido, TipoMoneda moneda) {

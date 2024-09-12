@@ -6,6 +6,8 @@ public class PrestamoResultado {
     private String mensaje;
     private Cuota cuota;
 
+    //el resultado para mostrar si el prestamo fue aprobado o rechazado
+
     public PrestamoResultado() {
     }
 

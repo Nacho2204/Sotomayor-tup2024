@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/prestamo")
+@RequestMapping("/api/prestamo")
 public class PrestamoController {
 
     @Autowired
@@ -22,19 +22,25 @@ public class PrestamoController {
     @Autowired
     private PrestamoService prestamoService;
 
+    //metodo para obtener los datos del prestamo por dni
     @GetMapping("/{dni}")
     public List<Prestamo> buscarPrestamoPorDni(@PathVariable long dni) {
         try {
-            return prestamoService.getPrestamosByCliente(dni);
+            return prestamoService.buscarPrestamoByDni(dni);
         } catch (ClienteNoEncontradoException e) {
             // cliente no encontrado devolviendo 404
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
-        } catch (Exception e) {
+        } catch (PrestamoNoExisteException e) {
+            // Prestamo no encontrado devolviendo 404
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        }
+        catch (Exception e) {
             // Manejo general de errores devolviendo 500
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error inesperado", e);
         }
     }
 
+    //metodo para crear un prestamo
     @PostMapping
     public PrestamoResultado crearPrestamo(@RequestBody PrestamoDto prestamodto) {
         try {

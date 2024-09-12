@@ -25,22 +25,21 @@ public class PrestamoService {
     @Autowired
     private ScoreCrediticioService scoreCreditService;
 
-
-    public PrestamoResultado solicitarPrestamo (PrestamoDto prestamoDto) throws Exception, ClienteNoEncontradoException, CuentaNoEncontradaException, ClienteNull, PlazoMesesPrestamoExxception, MontoMinimoException {
+    //metodo para crear el prestamo
+    public PrestamoResultado solicitarPrestamo (PrestamoDto prestamoDto) throws Exception, ClienteNoEncontradoException, ClienteNull, PlazoMesesPrestamoExxception, MontoMinimoException {
         Prestamo prestamo = new Prestamo(prestamoDto);
 
         if (prestamoDto.getNumeroCliente() <= 0) {
             throw new ClienteNull("El número de cliente no es válido.");
         }
 
-        if (prestamoDto.getPlazoMeses() < 3 || prestamoDto.getPlazoMeses() > 120) {
-            throw new PlazoMesesPrestamoExxception("El plazo debe estar entre 3 y 120 meses.");
+        if (prestamoDto.getPlazoMeses() < 3 || prestamoDto.getPlazoMeses() > 60) {
+            throw new PlazoMesesPrestamoExxception("El plazo debe estar entre 3 y 60 meses.");
         }
 
-        if (prestamoDto.getMontoPrestamo()<= 1000){
-            throw new MontoMinimoException("El monto del préstamo debe ser mayor a 1000");
+        if (prestamoDto.getMontoPrestamo()< 2000){
+            throw new MontoMinimoException("El monto del préstamo debe ser mayor a 2000");
         }
-
 
         if (!scoreCreditService.verificarScore(prestamo.getNumeroCliente())) {
             PrestamoResultado prestamoResultado = new PrestamoResultado();
@@ -62,7 +61,14 @@ public class PrestamoService {
         return prestamoResultado;
     }
 
-    public List<Prestamo> getPrestamosByCliente(long dni) throws Exception, ClienteNoEncontradoException {
+    //metodo para obtener los prestamos de un cliente
+
+    public List<Prestamo> buscarPrestamoByDni(long dni) throws Exception, ClienteNoEncontradoException,PrestamoNoExisteException {
+        List<Prestamo> prestamos = prestamoDao.getPrestamosByCliente(dni);
+        if (prestamos.isEmpty()) {
+            // lanzar una excepción si no tiene préstamos
+            throw new PrestamoNoExisteException("El cliente no tiene préstamos");
+        }
         clienteService.buscarClientePorDni(dni);
         return prestamoDao.getPrestamosByCliente(dni);
     }

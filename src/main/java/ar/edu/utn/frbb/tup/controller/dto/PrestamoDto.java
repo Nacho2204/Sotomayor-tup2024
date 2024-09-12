@@ -6,6 +6,7 @@ public class PrestamoDto {
     private long montoPrestamo;
     private String moneda;
 
+        //constructores
     public PrestamoDto() {
     }
 
@@ -15,7 +16,7 @@ public class PrestamoDto {
         this.montoPrestamo = montoPrestamo;
         this.moneda = moneda;
     }
-
+        //getters y setters
     public long getNumeroCliente() {
         return numeroCliente;
     }
